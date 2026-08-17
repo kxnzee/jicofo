@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## OpenSpec Context Boundary
+
+- This Code Repository owns its technical context: source layout, frameworks,
+  configuration, implementation constraints, build/test/lint commands, CI, and
+  packaging details.
+- Product requirements, observable scenarios, and cross-system planning live in the
+  central Store selected by `openspec/config.yaml`.
+- Keep repository-local technical details here or in this repository's documentation.
+  The Store may reference them as evidence, but must not duplicate them as permanent
+  repository-specific context.
+- Do not create a local `openspec/changes/`; this repository implements Changes owned
+  by the central Store.
+
 ## Overview
 
 Jicofo (JItsi COnference FOcus) is a signaling server for Jitsi Meet conferences. It manages XMPP Multi-User Chat (MUC) rooms, initiates Jingle sessions with participants, and coordinates media routing through Jitsi Videobridge instances using the Colibri2 protocol.
