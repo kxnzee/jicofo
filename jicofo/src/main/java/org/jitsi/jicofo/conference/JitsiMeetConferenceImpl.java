@@ -2017,11 +2017,6 @@ public class JitsiMeetConferenceImpl
         }
 
         long participantCount = getUserParticipantCount();
-        boolean visitorsAlreadyUsed;
-        synchronized (visitorChatRooms)
-        {
-            visitorsAlreadyUsed = !visitorChatRooms.isEmpty();
-        }
 
         int participantsSoftLimit = VisitorsConfig.config.getMaxParticipants();
         if (chatRoom != null && chatRoom.getParticipantsSoftLimit() != null && chatRoom.getParticipantsSoftLimit() > 0)
@@ -2030,11 +2025,14 @@ public class JitsiMeetConferenceImpl
         }
 
         logger.debug("redirectVisitor: participantsSoftLimit=" + participantsSoftLimit
-            + ", visitorsAlreadyUsed=" + visitorsAlreadyUsed
             + ", visitorRequested=" + visitorRequested
             + ", participantCount=" + participantCount
             + ", participantsSoftLimit=" + participantsSoftLimit);
-        if (visitorsAlreadyUsed || visitorRequested || participantCount >= participantsSoftLimit)
+        // Note: this used to also redirect whenever visitorChatRooms was non-empty ("sticky" visitor mode once any
+        // visitor had joined). That forced every subsequent non-visitor-requesting reconnect back to a visitor node
+        // regardless of capacity headroom, including a promoted visitor's own reconnect after being admitted to the
+        // main room. Gate purely on an explicit visitor request or actual capacity instead.
+        if (visitorRequested || participantCount >= participantsSoftLimit)
         {
             return selectVisitorNode();
         }
