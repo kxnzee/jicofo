@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
 import org.jitsi.jicofo.FocusManager
+import org.jitsi.jicofo.JicofoConfig
 import org.jitsi.jicofo.TaskPools
 import org.jitsi.jicofo.auth.AuthenticationAuthority
 import org.jitsi.jicofo.auth.ErrorFactory
@@ -120,6 +121,12 @@ class ConferenceIqHandler(
 
             if (jigasiEnabled) {
                 addProperty(ConferenceIq.Property("sipGatewayEnabled", "true"))
+            }
+
+            JicofoConfig.config.localRegion?.let { localRegion ->
+                if (localRegion.isNotEmpty()) {
+                    addProperty(ConferenceIq.Property("focus-region", localRegion))
+                }
             }
         }
 

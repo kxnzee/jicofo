@@ -18,9 +18,11 @@
 package org.jitsi.jicofo
 
 import io.kotest.core.spec.style.ShouldSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
+import org.jitsi.config.withNewConfig
 import org.jitsi.jicofo.conference.JitsiMeetConference
 import org.jitsi.jicofo.xmpp.ConferenceIqHandler
 import org.jitsi.xmpp.extensions.jitsimeet.ConferenceIq
@@ -43,16 +45,38 @@ class ConferenceIqHandlerTest : ShouldSpec() {
         visitorsManager = mockk(relaxed = true)
     )
 
+    private fun newConferenceIq() = ConferenceIq().apply {
+        this.from = from
+        room = JidCreate.entityBareFrom("testRoom@example.com")
+        to = JidCreate.from("example.com")
+        type = IQ.Type.set
+    }
+
     init {
         context("Handling a ConferenceIQ") {
-            val conferenceIq = ConferenceIq().apply {
-                this.from = from
-                room = JidCreate.entityBareFrom("testRoom@example.com")
-                to = JidCreate.from("example.com")
-                type = IQ.Type.set
-            }
+            conferenceIqHandler.handleConferenceIq(newConferenceIq()).shouldBeInstanceOf<ConferenceIq>()
+        }
 
-            conferenceIqHandler.handleConferenceIq(conferenceIq).shouldBeInstanceOf<ConferenceIq>()
+        context("Handling a ConferenceIQ with a non-empty focus region configured") {
+            withNewConfig("jicofo.local-region=region1") {
+                val response = conferenceIqHandler.handleConferenceIq(newConferenceIq())
+                response.shouldBeInstanceOf<ConferenceIq>()
+                (response as ConferenceIq).properties.single { it.name == "focus-region" }.value shouldBe "region1"
+            }
+        }
+
+        context("Handling a ConferenceIQ with no focus region configured") {
+            val response = conferenceIqHandler.handleConferenceIq(newConferenceIq())
+            response.shouldBeInstanceOf<ConferenceIq>()
+            (response as ConferenceIq).properties.none { it.name == "focus-region" } shouldBe true
+        }
+
+        context("Handling a ConferenceIQ with an empty focus region configured") {
+            withNewConfig("jicofo.local-region=\"\"") {
+                val response = conferenceIqHandler.handleConferenceIq(newConferenceIq())
+                response.shouldBeInstanceOf<ConferenceIq>()
+                (response as ConferenceIq).properties.none { it.name == "focus-region" } shouldBe true
+            }
         }
     }
 }
