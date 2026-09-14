@@ -23,7 +23,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import org.jitsi.jicofo.conference.JitsiMeetConference
-import org.jitsi.jicofo.version.CurrentVersionImpl
 import org.jitsi.jicofo.xmpp.ConferenceIqHandler
 import org.jitsi.xmpp.extensions.jitsimeet.ConferenceIq
 import org.jivesoftware.smack.packet.IQ
@@ -57,9 +56,8 @@ class ConferenceIqHandlerTest : ShouldSpec() {
             val response = conferenceIqHandler.handleConferenceIq(conferenceIq)
             response.shouldBeInstanceOf<ConferenceIq>()
 
-            should("include the focus-version property") {
-                (response as ConferenceIq).propertiesMap["focus-version"] shouldBe
-                    CurrentVersionImpl.VERSION.toString()
+            should("not include a focus-version property") {
+                (response as ConferenceIq).propertiesMap.containsKey("focus-version") shouldBe false
             }
 
             should("leave the existing authentication property unchanged") {
