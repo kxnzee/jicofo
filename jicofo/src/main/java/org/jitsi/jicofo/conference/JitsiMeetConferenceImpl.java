@@ -650,6 +650,11 @@ public class JitsiMeetConferenceImpl
             Boolean.TRUE.toString(),
             false);
 
+        setConferenceProperty(
+            "focus-build-id",
+            CurrentVersionImpl.NIGHTLY_BUILD_ID,
+            false);
+
         if (VisitorsConfig.config.getEnabled())
         {
             setConferenceProperty(
