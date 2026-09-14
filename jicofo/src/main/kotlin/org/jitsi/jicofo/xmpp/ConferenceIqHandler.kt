@@ -26,7 +26,6 @@ import org.jitsi.jicofo.TaskPools
 import org.jitsi.jicofo.auth.AuthenticationAuthority
 import org.jitsi.jicofo.auth.ErrorFactory
 import org.jitsi.jicofo.metrics.JicofoMetricsContainer
-import org.jitsi.jicofo.version.CurrentVersionImpl
 import org.jitsi.jwt.JitsiToken
 import org.jitsi.tracing.TracingGlobal.Companion.sdk
 import org.jitsi.utils.logging2.createLogger
@@ -122,8 +121,6 @@ class ConferenceIqHandler(
             if (jigasiEnabled) {
                 addProperty(ConferenceIq.Property("sipGatewayEnabled", "true"))
             }
-
-            addProperty(ConferenceIq.Property("focus-version", CurrentVersionImpl.VERSION.toString()))
         }
 
         logger.info("Conference request for room $room, from ${query.from}, token=${query.token != null}")
