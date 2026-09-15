@@ -35,6 +35,7 @@ import org.jitsi.jicofo.mock.ConferenceHarness
 import org.jitsi.jicofo.mock.inPlaceExecutor
 import org.jitsi.jicofo.mock.inPlaceScheduledExecutor
 import org.jitsi.jicofo.util.shouldBeValidJson
+import org.jitsi.jicofo.version.CurrentVersionImpl
 import org.jitsi.jicofo.xmpp.muc.ChatRoomMember
 import org.jitsi.jicofo.xmpp.muc.MemberRole
 import org.jitsi.utils.MediaType
@@ -65,6 +66,15 @@ class ConferenceTest : ShouldSpec() {
     private fun ChatRoomMember.getRemoteParticipant() = harness.getRemoteParticipant(this)
 
     init {
+        context("Conference properties") {
+            should("publish focus-build-id using the server's existing build identifier") {
+                val properties = conference.debugState.get("conference_properties")
+                properties.get("focus-build-id").asText() shouldBe CurrentVersionImpl.NIGHTLY_BUILD_ID
+                // Other conference properties must still be published.
+                properties.get(org.jitsi.xmpp.extensions.jitsimeet.ConferenceProperties.KEY_SUPPORTS_SESSION_RESTART)
+                    .asText() shouldBe "true"
+            }
+        }
         context("Test inviting 2 participants initially") {
             // Simulate occupants entering the MUC
             val member1 = chatRoom.addMember("member1")
