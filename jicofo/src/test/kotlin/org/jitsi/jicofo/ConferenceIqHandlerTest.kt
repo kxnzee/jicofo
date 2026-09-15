@@ -56,10 +56,6 @@ class ConferenceIqHandlerTest : ShouldSpec() {
             val response = conferenceIqHandler.handleConferenceIq(conferenceIq)
             response.shouldBeInstanceOf<ConferenceIq>()
 
-            should("not include a focus-version property") {
-                (response as ConferenceIq).propertiesMap.containsKey("focus-version") shouldBe false
-            }
-
             should("leave the existing authentication property unchanged") {
                 (response as ConferenceIq).propertiesMap["authentication"] shouldBe "false"
             }

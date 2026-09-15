@@ -74,6 +74,14 @@ class ConferenceTest : ShouldSpec() {
                 properties.get(org.jitsi.xmpp.extensions.jitsimeet.ConferenceProperties.KEY_SUPPORTS_SESSION_RESTART)
                     .asText() shouldBe "true"
             }
+            should("publish focus-version using the server's existing version string") {
+                val properties = conference.debugState.get("conference_properties")
+                properties.get("focus-version").asText() shouldBe CurrentVersionImpl.VERSION.toString()
+                // Other conference properties must still be published.
+                properties.get("focus-build-id").asText() shouldBe CurrentVersionImpl.NIGHTLY_BUILD_ID
+                properties.get(org.jitsi.xmpp.extensions.jitsimeet.ConferenceProperties.KEY_SUPPORTS_SESSION_RESTART)
+                    .asText() shouldBe "true"
+            }
         }
         context("Test inviting 2 participants initially") {
             // Simulate occupants entering the MUC
