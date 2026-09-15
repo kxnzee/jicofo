@@ -655,6 +655,11 @@ public class JitsiMeetConferenceImpl
             CurrentVersionImpl.NIGHTLY_BUILD_ID,
             false);
 
+        setConferenceProperty(
+            "focus-version",
+            CurrentVersionImpl.VERSION.toString(),
+            false);
+
         if (VisitorsConfig.config.getEnabled())
         {
             setConferenceProperty(
